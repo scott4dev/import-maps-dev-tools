@@ -1,0 +1,16 @@
+{
+    "manifest_version": 2,
+    "version": "0.1.0",
+    "name": "Import-maps developer Tools",
+    "content_scripts": [
+        {
+            "matches": [
+                "http://*/*",
+                "https://*/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
