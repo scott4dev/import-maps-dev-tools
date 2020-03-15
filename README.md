@@ -1,7 +1,7 @@
 # Import-maps dev tools
 
 ## Abstract
-If you're working with [import-maps](https://github.com/WICG/import-maps) you might this this chrome extension to boost your productivity
+If you're working with [import-maps](https://github.com/WICG/import-maps) you can boost your productivity with this chrome extension
 
 
 ## Usage
