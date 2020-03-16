@@ -1,0 +1,19 @@
+{
+  "name": "import-maps-dev-tools",
+  "version": "1.0.0",
+  "description": "Import-maps developer Tools",
+  "main": "content.js",
+  "scripts": {
+    "build": "exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scott4dev/import-maps-dev-tools.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/scott4dev/import-maps-dev-tools/issues"
+  },
+  "homepage": "https://github.com/scott4dev/import-maps-dev-tools#readme"
+}
