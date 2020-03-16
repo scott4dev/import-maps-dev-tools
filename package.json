@@ -10,8 +10,8 @@
     "type": "git",
     "url": "git+https://github.com/scott4dev/import-maps-dev-tools.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Claudio Maccari",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/scott4dev/import-maps-dev-tools/issues"
   },
