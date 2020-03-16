@@ -1,16 +1,16 @@
 {
     "manifest_version": 2,
-    "version": "0.1.0",
+    "version": "0.1.4",
     "name": "Import-maps developer Tools",
     "content_scripts": [
         {
             "matches": [
-                "http://*/*",
-                "https://*/*"
+                "<all_urls>"
             ],
             "js": [
                 "content.js"
             ]
         }
-    ]
+    ],
+    "permissions": ["activeTab"]
 }
