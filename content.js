@@ -1,59 +1,84 @@
-function query(selector) {
-    const content = document.querySelector(selector) || {};
-    return content.innerHTML;
+/* global chrome */
+'use strict';
+
+let backendDisconnected = false;
+let backendInitialized = false;
+
+const selectors = {
+    'systemjs-importmap': "script[type='systemjs-importmap']",
+    'importmap-shim': "script[type='importmap-shim']",
+    'importmap': "script[type='importmap']"
 }
 
-function printImports(data) {
-    const unordered = data.imports;
-    const ordered = {};
-    Object.keys(unordered).sort().forEach(function (key) {
-        ordered[key] = unordered[key];
-    });
-    console.table(ordered);
-}
-
-function printSrcAttribute(content) {
-    const src = content.getAttribute("src")
-    if (src) {
-        console.log("Fetched from:", src);
-        fetch(src).then(function (response) {
-            return response.json()
-        }).then(printImports).catch(console.error);
+function extract(key) {
+    const element = document.querySelector(selectors[key])
+    console.log(key, element);
+    if (element) {
+        // window.postMessage(
+        //     {
+        //         source: 'import-maps-devtools-content-script',
+        //         payload: {
+        //             key,
+        //             content: element.innerHTML
+        //         },
+        //     },
+        //     '*',
+        // );
+        port.postMessage({
+            type: 'query',
+            key,
+            content: element.innerHTML
+        });
     }
 }
 
-function printInnerHTML(content) {
-    if (content.innerHTML) {
-        console.log("Embedded in the DOM");
-        printImports(JSON.parse(content.innerHTML));
+function handleMessageFromDevtools(message) {
+    console.log('handleMessageFromDevtools', message);
+    // window.postMessage(
+    //     {
+    //         source: 'import-maps-devtools-content-script',
+    //         payload: message,
+    //     },
+    //     '*',
+    // );
+}
+
+function handleMessageFromPage(evt) {
+    if (
+        evt.source === window &&
+        evt.data // &&
+        // evt.data.source === 'import-maps-devtools-bridge'
+    ) {
+        backendInitialized = true;
+        port.postMessage(evt.data.payload);
     }
 }
 
-function print(selector) {
-    const content = document.querySelector(selector);
-    if (content) {
-        console.log('Import-maps for:', selector);
-        printInnerHTML(content);
-        printSrcAttribute(content);
-    }
+function handleDisconnect() {
+    backendDisconnected = true;
+    window.removeEventListener('message', handleMessageFromPage);
+    window.postMessage(
+        {
+            source: 'import-maps-devtools-content-script',
+            payload: {
+                type: 'event',
+                event: 'shutdown',
+            },
+        },
+        '*',
+    );
 }
 
-let analyse = function () {
-    chrome.runtime.sendMessage({ 'title': document.title });
-    chrome.runtime.sendMessage({
-        query: 'importmap',
-        content: query("script[type='importmap']")
-    });
-    chrome.runtime.sendMessage({
-        query: 'importmap-shim',
-        content: query("script[type='importmap-shim']")
-    });
-    chrome.runtime.sendMessage({
-        query: 'systemjs-importmap',
-        content: query("script[type='systemjs-importmap']")
-    });
-}
+// proxy from main page to devtools (via the background page)
+const port = chrome.runtime.connect({
+    name: 'content-script',
+});
+port.onMessage.addListener(handleMessageFromDevtools);
+port.onDisconnect.addListener(handleDisconnect);
 
-analyse();
-print("script[type='systemjs-importmap']");
-print("script[type='importmap-shim']");
+window.addEventListener('message', handleMessageFromPage);
+// window.addEventListener('popstate', handleMessageFromPage);
+
+extract('systemjs-importmap');
+extract('importmap-shim');
+extract('importmap');
