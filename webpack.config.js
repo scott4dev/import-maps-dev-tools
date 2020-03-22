@@ -14,12 +14,12 @@ module.exports = {
             cleanStaleWebpackAssets: false
         }),
         new CopyWebpackPlugin([
-            { from: path.resolve(__dirname, "src/background.js") },
-            { from: path.resolve(__dirname, "src/content.js") },
-            { from: path.resolve(__dirname, "src/devtools.html") },
-            { from: path.resolve(__dirname, "src/devtools.js") },
-            { from: path.resolve(__dirname, "src/manifest.json") },
-            { from: path.resolve(__dirname, "src/panel.html") },
+            { from: path.resolve(__dirname, "public/background.js") },
+            { from: path.resolve(__dirname, "public/content.js") },
+            { from: path.resolve(__dirname, "public/devtools.html") },
+            { from: path.resolve(__dirname, "public/devtools.js") },
+            { from: path.resolve(__dirname, "public/manifest.json") },
+            { from: path.resolve(__dirname, "public/panel.html") },
         ])
     ],
     output: {

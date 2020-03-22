@@ -1,13 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
 
+const Entry = ({ url, size, description }) => {
+    return <tr>
+        <td>{description}</td>
+        <td>{size}</td>
+        <td><a href={url} target="_blank">file</a></td>
+    </tr>
+}
+
 const Imports = ({ title, data }) => (
     <div>
         <h6>{title}</h6>
-        <ul>
+        <table>
             {Object.keys(data).map(key => (
-                <li key={key}><a href={data[key]} target="_blank">{key}</a></li>
+                <Entry key={key} {...data[key]} />
             ))}
-        </ul>
+        </table>
     </div>
 )
 
@@ -16,7 +24,11 @@ function contentScriptListener(setData, msg) {
         const ordered = {};
         const { imports } = JSON.parse(msg.detail.content);
         Object.keys(imports).sort().forEach(function (key) {
-            ordered[key] = imports[key];
+            ordered[key] = {
+                description: key,
+                url: imports[key],
+                size: 0,
+            }
         });
         setData(prevData => Object.assign({}, prevData, { [msg.detail.key]: ordered }));
     }
