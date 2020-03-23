@@ -1,54 +1,60 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useCallback, useReducer, useState } from "react";
+import Imports from './imports';
+import { useWindowEvent } from './hooks';
+import { reducer, initialState } from './reducer';
 
-const Entry = ({ url, size, description }) => {
-    return <tr>
-        <td>{description}</td>
-        <td>{size}</td>
-        <td><a href={url} target="_blank">file</a></td>
-    </tr>
-}
+const Sources = ({ data, onSelect }) => (
+    <ul id="sources">
+        {data.map(function (item) {
+            return <li key={item} onClick={() => onSelect(item)}>{item}</li>
+        })}
+    </ul>
+);
 
-const Imports = ({ title, data }) => (
-    <div>
-        <h6>{title}</h6>
-        <table>
-            {Object.keys(data).map(key => (
-                <Entry key={key} {...data[key]} />
-            ))}
-        </table>
-    </div>
-)
-
-function contentScriptListener(setData, msg) {
-    if (msg.detail.type === "query") {
-        const ordered = {};
-        const { imports } = JSON.parse(msg.detail.content);
-        Object.keys(imports).sort().forEach(function (key) {
-            ordered[key] = {
-                description: key,
-                url: imports[key],
-                size: 0,
-            }
-        });
-        setData(prevData => Object.assign({}, prevData, { [msg.detail.key]: ordered }));
+const FileSize = ({ size }) => {
+    if (size) {
+       return (<span>{Math.round(size/1024)} kb</span>)
     }
+    return null;
+};
+
+function Files({ active, data }) {
+    const files = [];
+    Object.keys(data).forEach(function (key) {
+        if (data[key].source === active) {
+            files.push(data[key]);
+        }
+    });
+    return (
+        <>
+            <span>{active}</span>
+            <ul id="files">
+                {files.map(function (file) {
+                    return (
+                        <li key={file.key} id="file">
+                            <a href={file.url}>{file.key}</a> <FileSize size={file.size} />
+                        </li>
+                    );
+                })}
+            </ul>
+        </>
+    );
 }
 
 const Panel = () => {
-    const [data, setData] = useState({});
-    const eventListener = useCallback((msg) => contentScriptListener(setData, msg))
-    useEffect(() => {
-        window.addEventListener("ext-content-script", eventListener);
-        return () => {
-            window.removeEventListener("ext-content-script", eventListener);
-        };
-    }, []);
-    console.log('render...', data, Object.keys(data));
+    const [active, setActive] = useState();
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const eventListener = useCallback((msg) => dispatch(msg.detail))
+    useWindowEvent("ext-content-script", eventListener);
+    console.log('render...', state);
     return (
         <React.Fragment>
-            {Object.keys(data).map(key => (
-                <Imports key={key} title={key} data={data[key]} />
-            ))}
+            <div id="actions">
+                <span>{new Date().toLocaleTimeString()}</span>
+                <button onClick={() => dispatch({ type: 'reset' })}>clear</button>
+            </div>
+            <Sources data={state.sources} onSelect={setActive} />
+            <Files data={state.files} active={active} />
         </React.Fragment>
     )
 }
