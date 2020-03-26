@@ -13,30 +13,41 @@ const Sources = ({ data, onSelect }) => (
 
 const FileSize = ({ size }) => {
     if (size) {
-       return (<span>{Math.round(size/1024)} kb</span>)
+        return (<span>{Math.round(size / 1024)}</span>)
     }
     return null;
 };
 
 function Files({ active, data }) {
     const files = [];
-    Object.keys(data).forEach(function (key) {
+    Object.keys(data).sort().forEach(function (key) {
         if (data[key].source === active) {
             files.push(data[key]);
         }
     });
     return (
         <>
-            <span>{active}</span>
-            <ul id="files">
-                {files.map(function (file) {
-                    return (
-                        <li key={file.key} id="file">
-                            <a href={file.url}>{file.key}</a> <FileSize size={file.size} />
-                        </li>
-                    );
-                })}
-            </ul>
+            <table className="details">
+                <thead>
+                    <tr>
+                        <td>specifier</td>
+                        <td>kb</td>
+                        <td>file</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {files.map(function (file) {
+                        return (
+                            <tr key={file.key} id="file">
+                                <td style={{ whiteSpace: "nowrap" }}>{file.key}</td>
+                                <td style={{ textAlign: 'right' }}><FileSize size={file.size} /></td>
+                                <td className="file"><span style={{ color: "#cf4c49" }}>{file.url}</span></td>
+                                {/* <td className="file"><a href={file.url} target="_blank" style={{ color: "#cf4c49" }}>{file.url}</a></td> */}
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </table>
         </>
     );
 }
@@ -44,17 +55,31 @@ function Files({ active, data }) {
 const Panel = () => {
     const [active, setActive] = useState();
     const [state, dispatch] = useReducer(reducer, initialState);
-    const eventListener = useCallback((msg) => dispatch(msg.detail))
+    const eventListener = useCallback((msg) => msg.detail && dispatch(msg.detail))
     useWindowEvent("ext-content-script", eventListener);
     console.log('render...', state);
     return (
         <React.Fragment>
-            <div id="actions">
-                <span>{new Date().toLocaleTimeString()}</span>
-                <button onClick={() => dispatch({ type: 'reset' })}>clear</button>
+            {state.sources.map((source) => (
+                <>
+                    <div className="row">
+                        Found script[type="{source}"]
+                    </div>
+                    <div className="row">
+                        <Files data={state.files} active={source} />
+                    </div>
+                </>
+            ))}
+            <div className="row">
+                {/* <span>{new Date().toLocaleTimeString()}</span> */}
+                <a href="#" onClick={() => dispatch({ type: 'reset' })}>clear</a>
             </div>
-            <Sources data={state.sources} onSelect={setActive} />
-            <Files data={state.files} active={active} />
+            {/* <div className="row">
+                <Sources data={state.sources} onSelect={setActive} />
+            </div>
+            <div className="row">
+                <Files data={state.files} active={active} />
+            </div> */}
         </React.Fragment>
     )
 }

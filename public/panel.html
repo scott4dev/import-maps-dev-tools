@@ -3,16 +3,55 @@
 <head>
     <style>
         body {
-            font-size: small;
+            font-size: 11px !important;
+            font-family: Menlo, monospace;
+            padding: 0;
+            margin: 0;
         }
 
-        ul#sources {
-            list-style: none;
+        .row {
+            padding: 0.1rem 1.5rem;
+            border-bottom: 1px solid #f3f3f3;
         }
 
-        ul#sources li {
-            display: inline;
-            padding: 1rem;
+        .row>p {
+            margin: 0.25rem;
+        }
+
+        .details>tr {
+            margin: 0;
+            background: #f3f3f3;
+        }
+
+        .details {
+            font-size: 11px !important;
+            font-family: Menlo, monospace;
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+
+        .details>thead {
+            background: #f3f3f3;
+        }
+
+        .details>thead>tr>td {
+            padding: .25rem;
+            border: 1px solid #b4b4b4;
+        }
+
+        .details>tbody>tr:nth-child(odd) {
+            background: #f2f7fe;
+        }
+
+        .details>tbody>tr>td {
+            border: 1px solid #b4b4b4;
+            padding: .25rem;
+        }
+
+        .file {
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     </style>
 </head>
