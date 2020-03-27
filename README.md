@@ -22,7 +22,7 @@ npm run build
 
 * navigate to chrome://extensions or brave://extensions if your using brave
 * expand the Developer dropdown menu and click “Load Unpacked Extension”
-* navigate to the local folder containing the extension’s code and click Ok
+* navigate to the local folder containing the extension’s code (/dist folder) and click Ok
 * assuming there are no errors, you should have new "import maps" panel in the dev tools
 
 ## Install from chrome store
