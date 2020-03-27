@@ -6,7 +6,7 @@ If you're working with [import-maps](https://github.com/WICG/import-maps) you ca
 
 ## Installation
 
-## Install chrome extension from local folder (tested with chrome and brave)
+### Install chrome extension from local folder (tested with chrome and brave)
 
 * clone the repository
 ``` 
@@ -25,6 +25,6 @@ npm run build
 * navigate to the local folder containing the extension’s code (/dist folder) and click Ok
 * assuming there are no errors, you should have new "import maps" panel in the dev tools
 
-## Install from chrome store
+### Install from chrome store
 
 not yet available
